@@ -50,7 +50,7 @@
               <a
                 href="https://github.com/stevenwaterman/leagues-6-pareto-builds/"
                 target="_blank"
-                class="text-gray-500 transition-colors hover:text-white"
+                class="text-gray-500 hover:text-white transition-colors"
                 title="View on GitHub"
               >
                 <svg
@@ -70,12 +70,12 @@
             <div class="flex flex-wrap items-center gap-4">
               <div class="flex items-center gap-2">
                 <label
-                  class="text-xs font-medium uppercase tracking-wider text-gray-400"
+                  class="text-xs font-medium text-gray-400 uppercase tracking-wider"
                   >X-Axis</label
                 >
                 <select
                   v-model="xAxis"
-                  class="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-yellow-500"
+                  class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-yellow-500 outline-none"
                 >
                   <option
                     v-for="stat in availableStats"
@@ -88,12 +88,12 @@
               </div>
               <div class="flex items-center gap-2">
                 <label
-                  class="text-xs font-medium uppercase tracking-wider text-gray-400"
+                  class="text-xs font-medium text-gray-400 uppercase tracking-wider"
                   >Y-Axis</label
                 >
                 <select
                   v-model="yAxis"
-                  class="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-yellow-500"
+                  class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm focus:ring-1 focus:ring-yellow-500 outline-none"
                 >
                   <option
                     v-for="stat in availableStats"
@@ -115,7 +115,7 @@
           class="flex flex-col justify-center items-center py-40"
         >
           <div
-            class="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-yellow-500"
+            class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"
           ></div>
           <span class="mt-4 text-gray-400">Fetching equipment data...</span>
         </div>
@@ -123,12 +123,12 @@
         <div v-else class="space-y-12">
           <!-- Explanation Section -->
           <section
-            class="rounded-xl border border-gray-700 bg-gray-800 p-6 shadow-xl"
+            class="bg-gray-800 p-6 rounded-xl shadow-xl border border-gray-700"
           >
-            <h2 class="mb-2 text-xl font-bold text-yellow-500">
+            <h2 class="text-xl font-bold text-yellow-500 mb-2">
               How to use this tool
             </h2>
-            <div class="space-y-3 text-sm leading-relaxed text-gray-300">
+            <div class="text-sm text-gray-300 space-y-3 leading-relaxed">
               <p>
                 This tool helps you find your BIS for Leagues 6. Select the two
                 stats you want to maximise in the top-right corner (e.g.
@@ -139,9 +139,11 @@
                 Below the graph, there's a table for each slot. This shows the
                 items that are situationally BIS. No other item is better in
                 <strong>both</strong> of your selected stats. To improve one
-                stat, you must lose out on the other. The
-                <strong>weapon</strong> slot is excluded, because you probably
-                know what weapon you're going to use.
+                stat, you must lose out on the other.
+              </p>
+              <p>
+                The weapon slot is excluded, because you probably know what
+                weapon you're going to use.
               </p>
               <p>
                 If an item is unobtainable in your regions (or you just don't
@@ -156,10 +158,10 @@
 
           <!-- Full Builds Section -->
           <section
-            class="overflow-hidden rounded-xl border-2 border-yellow-600/30 bg-gray-800 shadow-2xl"
+            class="bg-gray-800 rounded-xl shadow-2xl border-2 border-yellow-600/30 overflow-hidden"
           >
             <div
-              class="flex items-center justify-between border-b border-gray-700 bg-gray-750 p-6"
+              class="p-6 bg-gray-750 border-b border-gray-700 flex justify-between items-center"
             >
               <div>
                 <h2 class="text-2xl font-bold text-yellow-500">
@@ -171,23 +173,83 @@
                 </p>
               </div>
               <span
-                class="ml-4 whitespace-nowrap rounded-full bg-yellow-600 px-3 py-1 text-sm font-bold text-white shadow-lg"
+                class="ml-4 whitespace-nowrap rounded-full bg-yellow-600 px-3 py-1 text-sm font-bold shadow-lg text-white"
               >
                 {{ fullBuilds.length }} Builds
               </span>
             </div>
 
             <div class="p-6">
-              <div v-if="fullBuilds.length > 0">
+              <div
+                v-if="fullBuilds.length > 0"
+                class="flex flex-col xl:flex-row gap-8"
+              >
                 <!-- Graph Container -->
                 <div
-                  class="relative min-h-[500px] rounded-lg border border-gray-700 bg-gray-900/50 p-4"
+                  class="relative min-h-[500px] flex-grow rounded-lg border border-gray-700 bg-gray-900/50 p-4"
                 >
                   <canvas id="paretoChart"></canvas>
+                </div>
+
+                <!-- Hover/Selection Info -->
+                <div class="flex-shrink-0 xl:w-80">
                   <div
-                    id="chart-tooltip"
-                    class="pointer-events-none absolute z-50 hidden min-w-[240px] rounded-lg border border-yellow-600/50 bg-gray-800 p-4 shadow-2xl transition-opacity duration-200"
-                  ></div>
+                    class="min-h-[480px] rounded-lg border border-yellow-600/50 bg-gray-750 p-4 shadow-lg"
+                  >
+                    <div v-if="selectedBuild">
+                      <h3
+                        class="mb-4 text-sm font-bold uppercase tracking-widest text-yellow-500"
+                      >
+                        Selected Build
+                      </h3>
+
+                      <div
+                        class="mb-6 flex justify-between rounded border border-gray-700 bg-gray-900/50 p-3"
+                      >
+                        <div class="flex-1 text-center">
+                          <div class="text-[10px] uppercase text-gray-500">
+                            {{ xAxis }}
+                          </div>
+                          <div class="text-xl font-bold text-white">
+                            {{ Number(selectedBuild.x.toFixed(2)) }}
+                          </div>
+                        </div>
+                        <div class="mx-2 w-px bg-gray-700"></div>
+                        <div class="flex-1 text-center">
+                          <div class="text-[10px] uppercase text-gray-500">
+                            {{ yAxis }}
+                          </div>
+                          <div class="text-xl font-bold text-white">
+                            {{ Number(selectedBuild.y.toFixed(2)) }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="space-y-2">
+                        <div
+                          v-for="item in selectedBuild.items"
+                          :key="item.slot"
+                          class="flex flex-col border-b border-gray-700/50 pb-1 last:border-0"
+                        >
+                          <span
+                            class="text-[9px] font-bold uppercase text-gray-500"
+                            >{{ item.slot }}</span
+                          >
+                          <span class="truncate text-xs text-gray-200"
+                            >{{ item.name }}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      v-else
+                      class="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-900/30 p-8 text-center"
+                    >
+                      <p class="text-sm italic text-gray-500">
+                        No build selected
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div v-else class="p-12 text-center">
@@ -209,20 +271,20 @@
             class="scroll-mt-32"
           >
             <div
-              class="mb-4 flex items-center justify-between border-b border-gray-800 pb-2"
+              class="flex items-center justify-between mb-4 border-b border-gray-800 pb-2"
             >
               <div class="flex flex-col">
                 <div class="flex items-baseline gap-4">
                   <h2 class="text-3xl font-bold text-gray-200">{{ slot }}</h2>
                   <span
-                    class="text-sm font-semibold uppercase tracking-widest text-gray-500"
+                    class="text-sm text-gray-500 uppercase tracking-widest font-semibold"
                   >
                     {{ getParetoItems(slot).length }} Optimal
                   </span>
                 </div>
                 <p
                   v-if="slot === 'Ammo'"
-                  class="mt-1 text-xs italic text-gray-500"
+                  class="text-xs text-gray-500 mt-1 italic"
                 >
                   Note: Only blessings are shown, if you're using a ranged
                   weapon then you should mark all blessing as unobtainable.
@@ -249,7 +311,7 @@
                   Excluded
                   <span
                     v-if="getExcludedItemsForSlot(slot).length > 0"
-                    class="rounded-full bg-black/30 px-1.5 text-[10px]"
+                    class="bg-black/30 px-1.5 rounded-full text-[10px]"
                   >
                     {{ getExcludedItemsForSlot(slot).length }}
                   </span>
@@ -258,16 +320,16 @@
             </div>
 
             <div
-              class="overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-xl"
+              class="bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-gray-700"
             >
               <!-- Optimal View -->
               <div v-if="slotView[slot] !== 'excluded'" class="overflow-x-auto">
                 <table class="w-full text-left">
                   <thead
-                    class="bg-gray-750 text-xs uppercase tracking-wider text-gray-400"
+                    class="bg-gray-750 text-gray-400 text-xs uppercase tracking-wider"
                   >
                     <tr>
-                      <th class="w-10 px-4 py-3"></th>
+                      <th class="px-4 py-3 w-10"></th>
                       <th class="px-6 py-3">Name</th>
                       <th class="px-6 py-3 text-yellow-500/80">{{ xAxis }}</th>
                       <th class="px-6 py-3 text-yellow-500/80">{{ yAxis }}</th>
@@ -278,13 +340,13 @@
                     <tr
                       v-for="item in getParetoItems(slot)"
                       :key="item.Name"
-                      class="group transition-colors hover:bg-gray-750"
+                      class="hover:bg-gray-750 transition-colors group"
                     >
                       <td class="px-4 py-4">
                         <button
                           v-if="item.Name.toLowerCase() !== 'nothing'"
                           @click="toggleExcluded(item.Name)"
-                          class="rounded border border-gray-600 bg-gray-700 p-1.5 text-gray-400 shadow-sm transition-all hover:border-red-500 hover:bg-red-600 hover:text-white"
+                          class="bg-gray-700 hover:bg-red-600 text-gray-400 hover:text-white transition-all p-1.5 rounded shadow-sm border border-gray-600 hover:border-red-500"
                           title="Mark as Not Obtained"
                         >
                           <svg
@@ -323,7 +385,7 @@
                     <tr v-if="getParetoItems(slot).length === 0">
                       <td
                         colspan="5"
-                        class="px-6 py-12 text-center italic text-gray-500"
+                        class="px-6 py-12 text-center text-gray-500 italic"
                       >
                         No items found for these criteria (check your
                         exclusions).
@@ -336,31 +398,31 @@
               <!-- Excluded View -->
               <div v-else class="p-8">
                 <div v-if="getExcludedItemsForSlot(slot).length > 0">
-                  <div class="mb-6 flex items-center justify-between">
+                  <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-semibold text-gray-300">
                       Hidden {{ slot }} Items
                     </h3>
                     <button
                       @click="clearSlotExclusions(slot)"
-                      class="rounded border border-red-700 bg-red-900/40 px-3 py-1.5 text-xs text-red-200 transition-colors hover:bg-red-900/60"
+                      class="text-xs bg-red-900/40 hover:bg-red-900/60 text-red-200 px-3 py-1.5 rounded border border-red-700 transition-colors"
                     >
                       Restore All {{ slot === 'Body' ? 'Bodies' : slot + 's' }}
                     </button>
                   </div>
                   <div
-                    class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                   >
                     <div
                       v-for="name in getExcludedItemsForSlot(slot)"
                       :key="name"
-                      class="group flex items-center justify-between rounded border border-gray-700 bg-gray-900 px-4 py-3"
+                      class="flex justify-between items-center bg-gray-900 px-4 py-3 rounded border border-gray-700 group"
                     >
-                      <span class="truncate text-sm italic text-gray-400"
+                      <span class="truncate text-gray-400 italic text-sm"
                         >{{ name }}</span
                       >
                       <button
                         @click="toggleExcluded(name)"
-                        class="ml-4 text-gray-600 transition-colors hover:text-green-500"
+                        class="text-gray-600 hover:text-green-500 transition-colors ml-4"
                         title="Restore Item"
                       >
                         <svg
@@ -379,7 +441,7 @@
                     </div>
                   </div>
                 </div>
-                <div v-else class="text-center italic text-gray-500 py-12">
+                <div v-else class="text-center text-gray-500 italic py-12">
                   No items excluded in this slot.
                 </div>
               </div>
@@ -397,14 +459,14 @@
           const loading = ref(true);
           const equipmentData = ref({});
           const slots = [
-            "Body",
             "Head",
+            "Body",
             "Legs",
             "Shield",
-            "Neck",
+            "Cape",
             "Feet",
             "Hands",
-            "Cape",
+            "Neck",
             "Ring",
             "Ammo",
           ];
@@ -675,53 +737,11 @@
                   responsive: true,
                   maintainAspectRatio: false,
                   onHover: (event, elements) => {
-                    const tooltipEl = document.getElementById("chart-tooltip");
                     if (elements.length > 0) {
                       const build = fullBuilds.value[elements[0].index];
                       if (selectedBuild.value !== build) {
                         selectedBuild.value = build;
                       }
-
-                      // Update and show custom tooltip
-                      const x = event.x;
-                      const y = event.y;
-
-                      let itemsHtml = build.items
-                        .map(
-                          (item) =>
-                            `<div class="flex flex-col border-b border-gray-700/50 pb-1 mb-1 last:border-0">
-                                <span class="text-[9px] font-bold uppercase text-gray-500 leading-none">${item.slot}</span>
-                                <span class="truncate text-xs text-gray-200">${item.name}</span>
-                             </div>`,
-                        )
-                        .join("");
-
-                      tooltipEl.innerHTML = `
-                        <div class="flex justify-between items-center mb-3 bg-gray-900/50 p-2 rounded border border-gray-700">
-                          <div class="text-center flex-1">
-                            <div class="text-[9px] uppercase text-gray-500 leading-none">${xAxis.value}</div>
-                            <div class="text-lg font-bold text-white leading-tight">${Number(build.x.toFixed(2))}</div>
-                          </div>
-                          <div class="mx-2 w-px h-6 bg-gray-700"></div>
-                          <div class="text-center flex-1">
-                            <div class="text-[9px] uppercase text-gray-500 leading-none">${yAxis.value}</div>
-                            <div class="text-lg font-bold text-white leading-tight">${Number(build.y.toFixed(2))}</div>
-                          </div>
-                        </div>
-                        <div class="space-y-1">${itemsHtml}</div>
-                      `;
-
-                      tooltipEl.style.left = x + 15 + "px";
-                      tooltipEl.style.top = y - 10 + "px";
-                      tooltipEl.style.display = "block";
-                      tooltipEl.style.opacity = "1";
-                    } else {
-                      tooltipEl.style.opacity = "0";
-                      setTimeout(() => {
-                        if (tooltipEl.style.opacity === "0") {
-                          tooltipEl.style.display = "none";
-                        }
-                      }, 200);
                     }
                   },
                   scales: {
