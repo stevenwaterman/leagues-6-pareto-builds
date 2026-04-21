@@ -47,9 +47,6 @@
               <h1 class="text-2xl font-bold text-yellow-500">
                 Leagues 6 Pareto Gear
               </h1>
-              <p class="text-xs text-gray-400">
-                Find optimal trade-offs across all slots
-              </p>
             </div>
 
             <div class="flex flex-wrap items-center gap-4">
@@ -106,110 +103,25 @@
         </div>
 
         <div v-else class="space-y-12">
-          <!-- Full Builds Section -->
+          <!-- Explanation Section -->
           <section
-            class="bg-gray-800 rounded-xl shadow-2xl border-2 border-yellow-600/30 overflow-hidden"
+            class="bg-gray-800 p-6 rounded-xl shadow-xl border border-gray-700"
           >
-            <div
-              class="p-6 bg-gray-750 border-b border-gray-700 flex justify-between items-center"
-            >
-              <div>
-                <h2 class="text-2xl font-bold text-yellow-500">
-                  Optimal Full Builds
-                </h2>
-                <p class="text-xs text-gray-400">
-                  Weapon and Ammo slots are not included, so you only need 48 or 49 prayer here for max air mage, since you'll have a blessing. The pareto-optimal build is not necessarily the best DPS.
-                </p>
-              </div>
-              <span
-                class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
-              >
-                {{ fullBuilds.length }} Builds
-              </span>
-            </div>
-
-            <div class="p-6">
-              <div
-                v-if="fullBuilds.length > 0"
-                class="flex flex-col xl:flex-row gap-8"
-              >
-                <!-- Graph Container -->
-                <div
-                  class="flex-grow bg-gray-900/50 p-4 rounded-lg border border-gray-700 relative min-h-[500px]"
-                >
-                  <canvas id="paretoChart"></canvas>
-                </div>
-
-                <!-- Hover/Selection Info -->
-                <div class="xl:w-80 flex-shrink-0">
-                  <div
-                    class="bg-gray-750 p-4 rounded-lg border border-yellow-600/50 shadow-lg min-h-[480px]"
-                  >
-                    <div v-if="selectedBuild">
-                      <h3
-                        class="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-4"
-                      >
-                        Selected Build
-                      </h3>
-
-                      <div
-                        class="flex justify-between mb-6 bg-gray-900/50 p-3 rounded border border-gray-700"
-                      >
-                        <div class="text-center flex-1">
-                          <div class="text-[10px] text-gray-500 uppercase">
-                            {{ xAxis }}
-                          </div>
-                          <div class="text-xl font-bold text-white">
-                            {{ Number(selectedBuild.x.toFixed(2)) }}
-                          </div>
-                        </div>
-                        <div class="w-px bg-gray-700 mx-2"></div>
-                        <div class="text-center flex-1">
-                          <div class="text-[10px] text-gray-500 uppercase">
-                            {{ yAxis }}
-                          </div>
-                          <div class="text-xl font-bold text-white">
-                            {{ Number(selectedBuild.y.toFixed(2)) }}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="space-y-2">
-                        <div
-                          v-for="item in selectedBuild.items"
-                          :key="item.slot"
-                          class="flex flex-col border-b border-gray-700/50 pb-1 last:border-0"
-                        >
-                          <span
-                            class="text-[9px] text-gray-500 uppercase font-bold"
-                            >{{ item.slot }}</span
-                          >
-                          <span class="text-xs text-gray-200 truncate"
-                            >{{ item.name }}</span
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      v-else
-                      class="h-full flex items-center justify-center text-center p-8 bg-gray-900/30 border border-dashed border-gray-700 rounded-lg"
-                    >
-                      <p class="text-sm text-gray-500 italic">
-                        No build selected
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div v-else class="p-12 text-center">
-                <div class="text-gray-500 italic mb-2">
-                  No full builds possible.
-                </div>
-                <div class="text-sm text-gray-600">
-                  Ensure at least one item is optimal and not excluded in every
-                  slot below.
-                </div>
-              </div>
+            <h2 class="text-xl font-bold text-yellow-500 mb-2">
+              How to use this tool
+            </h2>
+            <div class="text-sm text-gray-300 space-y-3 leading-relaxed">
+              <p>
+                This tool helps you find your BIS for Leagues 6.
+                Select the two stats you want to maximise in the top-right corner (e.g. <strong>Mage Acc</strong> vs <strong>Total Def</strong> for water thorns).
+              </p>
+              <p>
+                In each slot below, the <strong>Optimal</strong> items are those that are situationally BIS. No other item is better in <strong>both</strong> of your selected stats. To improve one stat, you must lose out on the other.
+                If you can't obtain (or don't yet have) an item, click the <strong>X</strong> to exclude it. The lists and the final builds will update automatically.
+              </p>
+              <p>
+                Scroll to the bottom to see the <strong>Optimal Full Builds</strong>, which combines these optimal pieces into complete gear sets on the Pareto frontier.
+              </p>
             </div>
           </section>
 
@@ -386,6 +298,113 @@
               </div>
             </div>
           </section>
+
+          <!-- Full Builds Section -->
+          <section
+            class="bg-gray-800 rounded-xl shadow-2xl border-2 border-yellow-600/30 overflow-hidden"
+          >
+            <div
+              class="p-6 bg-gray-750 border-b border-gray-700 flex justify-between items-center"
+            >
+              <div>
+                <h2 class="text-2xl font-bold text-yellow-500">
+                  Optimal Full Builds
+                </h2>
+                <p class="text-xs text-gray-400">
+                  Weapon and Ammo slots are not included, so you only need 48 or 49 prayer here for max air mage, since you'll have a blessing. The pareto-optimal build is not necessarily the best DPS.
+                </p>
+              </div>
+              <span
+                class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
+              >
+                {{ fullBuilds.length }} Builds
+              </span>
+            </div>
+
+            <div class="p-6">
+              <div
+                v-if="fullBuilds.length > 0"
+                class="flex flex-col xl:flex-row gap-8"
+              >
+                <!-- Graph Container -->
+                <div
+                  class="flex-grow bg-gray-900/50 p-4 rounded-lg border border-gray-700 relative min-h-[500px]"
+                >
+                  <canvas id="paretoChart"></canvas>
+                </div>
+
+                <!-- Hover/Selection Info -->
+                <div class="xl:w-80 flex-shrink-0">
+                  <div
+                    class="bg-gray-750 p-4 rounded-lg border border-yellow-600/50 shadow-lg min-h-[480px]"
+                  >
+                    <div v-if="selectedBuild">
+                      <h3
+                        class="text-sm font-bold text-yellow-500 uppercase tracking-widest mb-4"
+                      >
+                        Selected Build
+                      </h3>
+
+                      <div
+                        class="flex justify-between mb-6 bg-gray-900/50 p-3 rounded border border-gray-700"
+                      >
+                        <div class="text-center flex-1">
+                          <div class="text-[10px] text-gray-500 uppercase">
+                            {{ xAxis }}
+                          </div>
+                          <div class="text-xl font-bold text-white">
+                            {{ Number(selectedBuild.x.toFixed(2)) }}
+                          </div>
+                        </div>
+                        <div class="w-px bg-gray-700 mx-2"></div>
+                        <div class="text-center flex-1">
+                          <div class="text-[10px] text-gray-500 uppercase">
+                            {{ yAxis }}
+                          </div>
+                          <div class="text-xl font-bold text-white">
+                            {{ Number(selectedBuild.y.toFixed(2)) }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="space-y-2">
+                        <div
+                          v-for="item in selectedBuild.items"
+                          :key="item.slot"
+                          class="flex flex-col border-b border-gray-700/50 pb-1 last:border-0"
+                        >
+                          <span
+                            class="text-[9px] text-gray-500 uppercase font-bold"
+                            >{{ item.slot }}</span
+                          >
+                          <span class="text-xs text-gray-200 truncate"
+                            >{{ item.name }}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      v-else
+                      class="h-full flex items-center justify-center text-center p-8 bg-gray-900/30 border border-dashed border-gray-700 rounded-lg"
+                    >
+                      <p class="text-sm text-gray-500 italic">
+                        No build selected
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="p-12 text-center">
+                <div class="text-gray-500 italic mb-2">
+                  No full builds possible.
+                </div>
+                <div class="text-sm text-gray-600">
+                  Ensure at least one item is optimal and not excluded in every
+                  slot below.
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
     </div>
@@ -412,7 +431,7 @@
             localStorage.getItem("osrs_pareto_xaxis") || "Mage Acc",
           );
           const yAxis = ref(
-            localStorage.getItem("osrs_pareto_yaxis") || "Range Def",
+            localStorage.getItem("osrs_pareto_yaxis") || "Total Def",
           );
           const excludedItems = ref(new Set());
           const exclusionHistory = ref([]);
