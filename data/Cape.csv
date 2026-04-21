@@ -1,0 +1,27 @@
+Name,Stab Acc,Slash Acc,Crush Acc,Mage Acc,Range Acc,Stab Def,Slash Def,Crush Def,Mage Def,Range Def,Melee Str,Range Str,Mage Dmg,Prayer,Weight
+Mixed hide cape,0,0,0,-15,5,2,2,2,5,1,1,0,0,0,3
+Nothing,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.4
+Regular cape,0,0,0,0,0,0,1,1,0,2,0,0,0,0,0.453
+Decorative armour (quiver),0,0,0,0,0,4,4,4,4,4,0,0,0,0,8.164
+Cape of legends,0,0,0,0,0,7,7,7,7,7,0,0,0,0,1.814
+99 cape,0,0,0,0,0,9,9,9,9,9,0,0,0,0,0.453
+Cape of skulls,0,0,0,0,0,9,9,9,9,9,0,0,0,0,0.453
+Obsidian cape,0,0,0,0,0,9,9,9,9,9,0,0,0,0,1.814
+3rd age cloak,0,0,0,0,0,9,9,9,9,9,0,0,0,5,0.005
+Ava's attractor,0,0,0,0,2,0,0,0,2,0,0,0,0,0,4.535
+Ava's accumulator,0,0,0,0,4,0,1,0,4,0,0,0,0,0,4.535
+Ava's assembler,0,0,0,0,8,1,1,1,8,2,0,2,0,0,5.896
+Dizana's quiver,0,0,0,0,18,0,0,0,0,0,0,3,0,0,0.453
+3rd age druidic cloak,0,0,0,1,0,3,3,3,3,3,0,0,0,3,0.4
+God cloak,0,0,0,1,0,3,3,3,3,3,0,0,0,3,0.003
+Moonclan cape,0,0,0,2,-2,0,1,1,2,-2,0,0,0,0,0.453
+Ghostly cloak,0,0,0,5,0,0,0,0,5,0,0,0,0,0,0.001
+MA1 cape,0,0,0,10,0,1,1,2,10,0,0,0,0,0,0.453
+MA2 cape,0,0,0,15,0,3,3,3,15,0,0,0,0.02,0,0.453
+Mythical cape,0,0,6,0,0,8,8,8,8,8,1,0,0,1,1.814
+Fire cape,1,1,1,1,1,11,11,11,11,11,4,0,0,2,1.814
+Ardougne cloak 1,2,0,0,2,0,2,0,0,2,0,0,0,0,2,0.453
+Ardougne cloak 2,4,0,0,4,0,4,0,0,4,0,0,0,0,4,0.453
+Infernal cape,4,4,4,1,1,12,12,12,12,12,8,0,0,2,1.814
+Ardougne cloak 3,5,0,0,5,0,5,0,0,5,0,0,0,0,5,0.453
+Ardougne cloak 4,6,0,0,6,0,6,0,0,6,0,0,0,0,6,0.453

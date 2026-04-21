@@ -1,0 +1,33 @@
+Name,Stab Acc,Slash Acc,Crush Acc,Mage Acc,Range Acc,Stab Def,Slash Def,Crush Def,Mage Def,Range Def,Melee Str,Range Str,Mage Dmg,Prayer,Weight
+Berserker necklace,-10,-10,-10,0,0,-20,-20,-20,-20,-20,7,0,0,3,0.01
+Cursed amulet of magic,0,0,0,-3,0,0,0,0,0,0,0,0,-80%,0,0.01
+Nothing,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.01
+Amulet of strength,0,0,0,0,0,0,0,0,0,0,10,0,0,0,0.01
+Pendant of ates (Charged),0,0,0,0,0,0,0,0,3,0,0,0,0,2,0.06
+Void seal,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0.005
+Holy symbol,0,0,0,0,0,2,2,2,2,2,0,0,0,8,0.007
+Salve amulet,0,0,0,0,0,3,3,3,0,0,0,0,0,3,0.007
+Amulet of defence,0,0,0,0,0,7,7,7,7,7,0,0,0,0,0.01
+Gnome amulet,0,0,0,0,0,13,13,13,0,0,0,0,0,0,0.01
+Necklace of anguish,0,0,0,0,15,0,0,0,0,0,0,5,0,2,0.01
+Witchwood icon,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0.007
+Lunar amulet,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0.01
+Pendant of ates (Uncharged),0,0,0,2,0,0,0,0,0,0,0,0,0,0,0.06
+Xeric's talisman (Uncharged),0,0,0,2,0,0,0,0,0,0,0,0,0,0,0.06
+God stole,0,0,0,2,0,0,0,0,2,0,0,0,0,10,0.002
+Xeric's talisman (Charged),0,0,0,3,0,0,0,0,1,0,0,0,0,0,0.06
+Amulet of magic,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0.01
+Occult necklace,0,0,0,12,0,0,0,0,0,0,0,0,0.05,2,0.005
+3rd age amulet,0,0,0,15,0,0,0,0,10,0,0,0,0,0,0.003
+Beads of the dead,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0.01
+Unholy symbol,2,2,2,2,2,0,0,0,0,0,0,0,0,8,0.007
+Amulet of accuracy,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0.01
+Amulet of power,6,6,6,6,6,6,6,6,6,6,6,0,0,1,0.01
+Bonecrusher necklace,10,10,10,10,10,2,2,2,2,2,2,0,0,12,0.025
+Dragonbone necklace,10,10,10,10,10,2,2,2,2,2,2,0,0,12,0.005
+Amulet of avarice,10,10,10,10,10,3,3,3,3,3,6,0,0,3,0.01
+Amulet of glory,10,10,10,10,10,3,3,3,3,3,6,0,0,3,0.01
+Amulet of the damned,10,10,10,10,10,3,3,3,3,3,6,0,0,3,0.1
+Amulet of fury,10,10,10,10,10,15,15,15,15,15,8,0,0,5,0.01
+Amulet of torture,15,15,15,0,0,0,0,0,0,0,10,0,0,2,0.01
+Amulet of rancour,25,25,25,-6,-8,0,0,0,0,0,12,0,0,2,0.012

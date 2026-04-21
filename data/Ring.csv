@@ -1,0 +1,32 @@
+Name,Stab Acc,Slash Acc,Crush Acc,Mage Acc,Range Acc,Stab Def,Slash Def,Crush Def,Mage Def,Range Def,Melee Str,Range Str,Mage Dmg,Prayer,Weight
+Nothing,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Explorer's ring 1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0.006
+Explorer's ring 2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0.006
+Explorer's ring 3,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0.006
+Explorer's ring 4,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0.006
+Ultor ring,0,0,0,0,0,0,0,0,0,0,12,0,0,0,0.012
+Berserker ring,0,0,0,0,0,0,0,4,0,0,4,0,0,0,0.004
+Berserker ring (i),0,0,0,0,0,0,0,8,0,0,8,0,0,0,0.004
+Ring of the gods,0,0,0,0,0,1,1,1,1,1,0,0,0,4,0.3
+Ring of the gods (i),0,0,0,0,0,1,1,1,1,1,0,0,0,8,0.3
+Granite ring,0,0,0,0,0,2,2,2,-2,12,0,0,0,0,3
+Granite ring (i),0,0,0,0,0,4,4,4,-4,24,0,0,0,0,3
+Ring of suffering,0,0,0,0,0,10,10,10,10,10,0,0,0,2,0.006
+Ring of suffering (i),0,0,0,0,0,20,20,20,20,20,0,0,0,4,0.006
+Archers ring,0,0,0,0,4,0,0,0,0,4,0,0,0,0,0.004
+Archers ring (i),0,0,0,0,8,0,0,0,0,8,0,0,0,0,0.004
+Venator ring,0,0,0,0,10,0,0,0,0,0,0,2,0,0,0.012
+Beacon ring,0,0,0,2,0,0,0,0,1,0,0,0,0,0,0.006
+Lunar ring,0,0,0,2,0,0,0,0,2,0,0,0,0,0,0.006
+Seers ring,0,0,0,6,0,0,0,0,6,0,0,0,0.002,0,0.004
+Seers ring (i),0,0,0,12,0,0,0,0,12,0,0,0,0.005,0,0.004
+Magus ring,0,0,0,15,0,0,0,0,0,0,0,0,0.02,0,0.012
+Tyrannical ring,0,0,4,0,0,0,0,4,0,0,0,0,0,0,1
+Tyrannical ring (i),0,0,8,0,0,0,0,8,0,0,0,0,0,0,1
+Warrior ring,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0.004
+Warrior ring (i),0,8,0,0,0,0,8,0,0,0,0,0,0,0,0.004
+Bellator ring,0,20,0,0,0,0,0,0,0,0,6,0,0,0,0.012
+Treasonous ring,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0.4
+Ring of shadows,4,4,4,5,4,0,0,0,5,0,2,0,0,2,0.004
+Brimstone ring,4,4,4,6,4,4,4,4,6,4,4,0,0,0,0.004
+Treasonous ring (i),8,0,0,0,0,8,0,0,0,0,0,0,0,0,0.4
