@@ -1,7 +1,7 @@
 Name,Stab Acc,Slash Acc,Crush Acc,Mage Acc,Range Acc,Stab Def,Slash Def,Crush Def,Mage Def,Range Def,Melee Str,Range Str,Mage Dmg,Prayer,Weight
 Berserker necklace,-10,-10,-10,0,0,-20,-20,-20,-20,-20,7,0,0,3,0.01
 Cursed amulet of magic,0,0,0,-3,0,0,0,0,0,0,0,0,-80%,0,0.01
-Nothing,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.01
+Nothing,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Amulet of strength,0,0,0,0,0,0,0,0,0,0,10,0,0,0,0.01
 Pendant of ates (Charged),0,0,0,0,0,0,0,0,3,0,0,0,0,2,0.06
 Void seal,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0.005
