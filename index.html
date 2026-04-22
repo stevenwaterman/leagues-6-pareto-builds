@@ -776,6 +776,14 @@
             const ctx = document.getElementById("paretoChart");
             if (!ctx || displayedBuilds.value.length === 0) return;
 
+            // Add mouseleave listener once to hide tooltip when moving out of canvas
+            if (!ctx._hasMouseLeaveListener) {
+              ctx.addEventListener('mouseleave', () => {
+                selectedBuild.value = null;
+              });
+              ctx._hasMouseLeaveListener = true;
+            }
+
             const dataPoints = displayedBuilds.value.map((b) => ({
               x: b.x,
               y: b.y,
