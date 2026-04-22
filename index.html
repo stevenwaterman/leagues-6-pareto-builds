@@ -721,6 +721,11 @@
                 type: "scatter",
                 data: data,
                 options: {
+                  interaction: {
+                    mode: 'nearest',
+                    intersect: false,
+                    axis: 'xy'
+                  },
                   animation: animate ? undefined : false,
                   responsive: true,
                   maintainAspectRatio: false,
