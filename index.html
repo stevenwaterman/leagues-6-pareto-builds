@@ -169,7 +169,7 @@
                 </h2>
                 <p class="text-xs text-gray-400">
                   Weapon slots are not included. The pareto-optimal build is not
-                  necessarily the best DPS.
+                  necessarily the best DPS. <strong>Click a node to pin it for comparison.</strong>
                 </p>
               </div>
               <span
@@ -198,9 +198,9 @@
                     }"
                   >
                     <h3
-                      class="mb-3 text-[10px] font-bold uppercase tracking-widest text-yellow-500"
+                      class="mb-3 text-[10px] font-bold uppercase tracking-widest text-yellow-500 flex justify-between items-center"
                     >
-                      Selected Build
+                      <span>{{ pinnedBuild ? 'Comparing' : 'Selected Build' }}</span>
                     </h3>
 
                     <div
@@ -213,6 +213,10 @@
                         <div class="text-sm font-bold text-white">
                           {{ Number(selectedBuild.x.toFixed(2)) }}
                         </div>
+                        <div v-if="pinnedBuild && Number((selectedBuild.x - pinnedBuild.x).toFixed(2)) !== 0" 
+                             :class="['text-[10px] font-bold', (selectedBuild.x - pinnedBuild.x) > 0 ? 'text-green-500' : 'text-red-500']">
+                          {{ (selectedBuild.x - pinnedBuild.x) > 0 ? '+' : '' }}{{ Number((selectedBuild.x - pinnedBuild.x).toFixed(2)) }}
+                        </div>
                       </div>
                       <div class="mx-2 w-px bg-gray-700"></div>
                       <div class="flex-1 text-center">
@@ -221,6 +225,10 @@
                         </div>
                         <div class="text-sm font-bold text-white">
                           {{ Number(selectedBuild.y.toFixed(2)) }}
+                        </div>
+                        <div v-if="pinnedBuild && Number((selectedBuild.y - pinnedBuild.y).toFixed(2)) !== 0" 
+                             :class="['text-[10px] font-bold', (selectedBuild.y - pinnedBuild.y) > 0 ? 'text-green-500' : 'text-red-500']">
+                          {{ (selectedBuild.y - pinnedBuild.y) > 0 ? '+' : '' }}{{ Number((selectedBuild.y - pinnedBuild.y).toFixed(2)) }}
                         </div>
                       </div>
                     </div>
@@ -235,9 +243,13 @@
                           class="text-[8px] font-bold uppercase text-gray-500"
                           >{{ item.slot }}</span
                         >
-                        <span class="truncate text-[10px] text-gray-200"
+                        <span :class="['truncate text-[10px]', pinnedBuild && getItemBySlot(pinnedBuild, item.slot).name !== item.name ? 'text-yellow-400 font-bold' : 'text-gray-200']"
                           >{{ item.name }}</span
                         >
+                        <span v-if="pinnedBuild && getItemBySlot(pinnedBuild, item.slot).name !== item.name" 
+                              class="text-[8px] text-gray-500 line-through truncate">
+                          {{ getItemBySlot(pinnedBuild, item.slot).name }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -471,6 +483,7 @@
           const exclusionHistory = ref([]);
           const slotView = ref({}); // { slotName: 'optimal' | 'excluded' }
           const selectedBuild = ref(null);
+          const pinnedBuild = ref(null);
           const tooltipPos = ref({ x: 0, y: 0 });
           let chart = null;
 
@@ -679,20 +692,29 @@
               x: b.x,
               y: b.y,
             }));
-            const pointColors = fullBuilds.value.map((b) =>
-              selectedBuild.value &&
-              Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
-              Math.abs(b.y - selectedBuild.value.y) < 1e-9
-                ? "#ffffff"
-                : "#eab308",
-            );
-            const pointRadii = fullBuilds.value.map((b) =>
-              selectedBuild.value &&
-              Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
-              Math.abs(b.y - selectedBuild.value.y) < 1e-9
-                ? 8
-                : 5,
-            );
+            const pointColors = fullBuilds.value.map((b) => {
+              const isSelected = selectedBuild.value &&
+                Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
+                Math.abs(b.y - selectedBuild.value.y) < 1e-9;
+              const isPinned = pinnedBuild.value &&
+                Math.abs(b.x - pinnedBuild.value.x) < 1e-9 &&
+                Math.abs(b.y - pinnedBuild.value.y) < 1e-9;
+              
+              if (isPinned) return "#f97316"; // Orange for pinned
+              if (isSelected) return "#ffffff";
+              return "#eab308";
+            });
+
+            const pointRadii = fullBuilds.value.map((b) => {
+              const isSelected = selectedBuild.value &&
+                Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
+                Math.abs(b.y - selectedBuild.value.y) < 1e-9;
+              const isPinned = pinnedBuild.value &&
+                Math.abs(b.x - pinnedBuild.value.x) < 1e-9 &&
+                Math.abs(b.y - pinnedBuild.value.y) < 1e-9;
+              
+              return isPinned || isSelected ? 8 : 5;
+            });
 
             const data = {
               datasets: [
@@ -725,6 +747,19 @@
                     mode: 'nearest',
                     intersect: false,
                     axis: 'xy'
+                  },
+                  onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                      const build = fullBuilds.value[elements[0].index];
+                      if (pinnedBuild.value && 
+                          Math.abs(build.x - pinnedBuild.value.x) < 1e-9 && 
+                          Math.abs(build.y - pinnedBuild.value.y) < 1e-9) {
+                        pinnedBuild.value = null;
+                      } else {
+                        pinnedBuild.value = build;
+                      }
+                      updateChart(false);
+                    }
                   },
                   animation: animate ? undefined : false,
                   responsive: true,
@@ -814,6 +849,10 @@
             localStorage.removeItem("osrs_leagues_excluded");
           };
 
+          const getItemBySlot = (build, slot) => {
+            return build.items.find(i => i.slot === slot);
+          };
+
           onMounted(async () => {
             const saved = localStorage.getItem("osrs_leagues_excluded");
             if (saved) {
@@ -846,11 +885,13 @@
             getExcludedItemsForSlot,
             fullBuilds,
             selectedBuild,
+            pinnedBuild,
             tooltipPos,
             toggleExcluded,
             clearSlotExclusions,
             clearExclusions,
             slotView,
+            getItemBySlot,
           };
         },
       }).mount("#app");
