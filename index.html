@@ -169,14 +169,31 @@
                 </h2>
                 <p class="text-xs text-gray-400">
                   Weapon slots are not included. The pareto-optimal build is not
-                  necessarily the best DPS. <strong>Click a node to pin it for comparison.</strong>
+                  necessarily the best DPS.<br>
+                  <strong>Click a node to pin it for comparison.</strong>
                 </p>
               </div>
-              <span
-                class="ml-4 whitespace-nowrap rounded-full bg-yellow-600 px-3 py-1 text-sm font-bold shadow-lg text-white"
-              >
-                {{ fullBuilds.length }} Builds
-              </span>
+              <div class="flex items-center gap-4">
+                <div class="flex bg-gray-900 rounded-lg p-1 border border-gray-700">
+                  <button 
+                    @click="buildViewMode = 'recommended'"
+                    :class="['px-3 py-1 text-xs font-bold rounded transition-all', buildViewMode === 'recommended' ? 'bg-yellow-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300']"
+                  >
+                    Recommended
+                  </button>
+                  <button 
+                    @click="buildViewMode = 'all'"
+                    :class="['px-3 py-1 text-xs font-bold rounded transition-all', buildViewMode === 'all' ? 'bg-yellow-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300']"
+                  >
+                    All
+                  </button>
+                </div>
+                <span
+                  class="w-24 text-center whitespace-nowrap rounded-full bg-yellow-600 px-3 py-1 text-sm font-bold shadow-lg text-white"
+                >
+                  {{ displayedBuilds.length }} Builds
+                </span>
+              </div>
             </div>
 
             <div class="p-6">
@@ -490,6 +507,7 @@
           const excludedItems = ref(new Set());
           const exclusionHistory = ref([]);
           const slotView = ref({}); // { slotName: 'optimal' | 'excluded' }
+          const buildViewMode = ref('recommended'); // 'all' | 'recommended'
           const selectedBuild = ref(null);
           const pinnedBuild = ref(null);
           const tooltipPos = ref({ x: 0, y: 0 });
@@ -714,9 +732,14 @@
             }));
           });
 
+          const displayedBuilds = computed(() => {
+            if (buildViewMode.value === 'all') return fullBuilds.value;
+            return fullBuilds.value.filter(b => b.isRecommended);
+          });
+
           // Selection management
           watch(
-            fullBuilds,
+            displayedBuilds,
             (newBuilds) => {
               if (newBuilds.length > 0) {
                 const logText = newBuilds.map((b, i) => 
@@ -740,20 +763,24 @@
             { deep: true },
           );
 
-          // Update chart when selection changes without re-calculating everything
-          watch(selectedBuild, () => {
-            updateChart(false); // Update without animation
+          watch(buildViewMode, () => {
+            updateChart(false);
           });
 
-          const updateChart = (animate = true) => {
-            const ctx = document.getElementById("paretoChart");
-            if (!ctx || fullBuilds.value.length === 0) return;
+          // Update chart when selection changes without re-calculating everything
+          watch(selectedBuild, () => {
+            updateChart(false);
+          });
 
-            const dataPoints = fullBuilds.value.map((b) => ({
+          const updateChart = (animate = false) => {
+            const ctx = document.getElementById("paretoChart");
+            if (!ctx || displayedBuilds.value.length === 0) return;
+
+            const dataPoints = displayedBuilds.value.map((b) => ({
               x: b.x,
               y: b.y,
             }));
-            const pointColors = fullBuilds.value.map((b) => {
+            const pointColors = displayedBuilds.value.map((b) => {
               const isSelected = selectedBuild.value &&
                 Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
                 Math.abs(b.y - selectedBuild.value.y) < 1e-9;
@@ -766,7 +793,7 @@
               return "#eab308";
             });
 
-            const pointRadii = fullBuilds.value.map((b) => {
+            const pointRadii = displayedBuilds.value.map((b) => {
               const isSelected = selectedBuild.value &&
                 Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
                 Math.abs(b.y - selectedBuild.value.y) < 1e-9;
@@ -778,10 +805,6 @@
               return b.isRecommended ? 7 : 5;
             });
 
-            const pointStyles = fullBuilds.value.map((b) => {
-              return b.isRecommended ? 'star' : 'circle';
-            });
-
             const data = {
               datasets: [
                 {
@@ -790,7 +813,6 @@
                   backgroundColor: pointColors,
                   borderColor: "#eab308",
                   pointRadius: pointRadii,
-                  pointStyle: pointStyles,
                   pointHoverRadius: 12,
                   showLine: true,
                   fill: false,
@@ -804,12 +826,13 @@
               chart.data = data;
               chart.options.scales.x.title.text = xAxis.value;
               chart.options.scales.y.title.text = yAxis.value;
-              chart.update(animate ? undefined : "none");
+              chart.update("none");
             } else {
               chart = new Chart(ctx, {
                 type: "scatter",
                 data: data,
                 options: {
+                  animation: false,
                   interaction: {
                     mode: 'nearest',
                     intersect: false,
@@ -817,7 +840,7 @@
                   },
                   onClick: (event, elements) => {
                     if (elements.length > 0) {
-                      const build = fullBuilds.value[elements[0].index];
+                      const build = displayedBuilds.value[elements[0].index];
                       if (pinnedBuild.value && 
                           Math.abs(build.x - pinnedBuild.value.x) < 1e-9 && 
                           Math.abs(build.y - pinnedBuild.value.y) < 1e-9) {
@@ -828,12 +851,11 @@
                       updateChart(false);
                     }
                   },
-                  animation: animate ? undefined : false,
                   responsive: true,
                   maintainAspectRatio: false,
                   onHover: (event, elements) => {
                     if (elements.length > 0) {
-                      const build = fullBuilds.value[elements[0].index];
+                      const build = displayedBuilds.value[elements[0].index];
                       selectedBuild.value = build;
                       tooltipPos.value = {
                         x: event.x + 16,
@@ -951,6 +973,7 @@
             getParetoItems,
             getExcludedItemsForSlot,
             fullBuilds,
+            displayedBuilds,
             selectedBuild,
             pinnedBuild,
             tooltipPos,
@@ -959,6 +982,7 @@
             clearExclusions,
             slotView,
             getItemBySlot,
+            buildViewMode,
           };
         },
       }).mount("#app");
