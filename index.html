@@ -158,10 +158,10 @@
 
           <!-- Full Builds Section -->
           <section
-            class="bg-gray-800 rounded-xl shadow-2xl border-2 border-yellow-600/30 overflow-hidden"
+            class="bg-gray-800 rounded-xl shadow-2xl border-2 border-yellow-600/30"
           >
             <div
-              class="p-6 bg-gray-750 border-b border-gray-700 flex justify-between items-center"
+              class="p-6 bg-gray-750 border-b border-gray-700 flex justify-between items-center rounded-t-xl"
             >
               <div>
                 <h2 class="text-2xl font-bold text-yellow-500">
@@ -180,74 +180,65 @@
             </div>
 
             <div class="p-6">
-              <div
-                v-if="fullBuilds.length > 0"
-                class="flex flex-col xl:flex-row gap-8"
-              >
+              <div v-if="fullBuilds.length > 0" class="relative">
                 <!-- Graph Container -->
                 <div
-                  class="relative min-h-[500px] flex-grow rounded-lg border border-gray-700 bg-gray-900/50 p-4"
+                  class="relative min-h-[500px] rounded-lg border border-gray-700 bg-gray-900/50 p-4"
                 >
                   <canvas id="paretoChart"></canvas>
-                </div>
 
-                <!-- Hover/Selection Info -->
-                <div class="flex-shrink-0 xl:w-80">
+                  <!-- Floating Tooltip -->
                   <div
-                    class="min-h-[480px] rounded-lg border border-yellow-600/50 bg-gray-750 p-4 shadow-lg"
+                    v-if="selectedBuild"
+                    class="pointer-events-none absolute z-[100] w-64 rounded-lg border border-yellow-600/50 bg-gray-800/95 p-4 shadow-2xl backdrop-blur-sm"
+                    :style="{
+                      top: tooltipPos.y + 'px',
+                      left: tooltipPos.x + 'px',
+                      transform: (tooltipPos.x > tooltipPos.width / 2 ? 'translateX(-105%)' : 'translateX(5%)') + ' ' + (tooltipPos.y > tooltipPos.height / 2 ? 'translateY(-105%)' : 'translateY(5%)')
+                    }"
                   >
-                    <div v-if="selectedBuild">
-                      <h3
-                        class="mb-4 text-sm font-bold uppercase tracking-widest text-yellow-500"
-                      >
-                        Selected Build
-                      </h3>
+                    <h3
+                      class="mb-3 text-[10px] font-bold uppercase tracking-widest text-yellow-500"
+                    >
+                      Selected Build
+                    </h3>
 
-                      <div
-                        class="mb-6 flex justify-between rounded border border-gray-700 bg-gray-900/50 p-3"
-                      >
-                        <div class="flex-1 text-center">
-                          <div class="text-[10px] uppercase text-gray-500">
-                            {{ xAxis }}
-                          </div>
-                          <div class="text-xl font-bold text-white">
-                            {{ Number(selectedBuild.x.toFixed(2)) }}
-                          </div>
+                    <div
+                      class="mb-4 flex justify-between rounded border border-gray-700 bg-gray-900/50 p-2"
+                    >
+                      <div class="flex-1 text-center">
+                        <div class="text-[8px] uppercase text-gray-500">
+                          {{ xAxis }}
                         </div>
-                        <div class="mx-2 w-px bg-gray-700"></div>
-                        <div class="flex-1 text-center">
-                          <div class="text-[10px] uppercase text-gray-500">
-                            {{ yAxis }}
-                          </div>
-                          <div class="text-xl font-bold text-white">
-                            {{ Number(selectedBuild.y.toFixed(2)) }}
-                          </div>
+                        <div class="text-sm font-bold text-white">
+                          {{ Number(selectedBuild.x.toFixed(2)) }}
                         </div>
                       </div>
-
-                      <div class="space-y-2">
-                        <div
-                          v-for="item in selectedBuild.items"
-                          :key="item.slot"
-                          class="flex flex-col border-b border-gray-700/50 pb-1 last:border-0"
-                        >
-                          <span
-                            class="text-[9px] font-bold uppercase text-gray-500"
-                            >{{ item.slot }}</span
-                          >
-                          <span class="truncate text-xs text-gray-200"
-                            >{{ item.name }}</span
-                          >
+                      <div class="mx-2 w-px bg-gray-700"></div>
+                      <div class="flex-1 text-center">
+                        <div class="text-[8px] uppercase text-gray-500">
+                          {{ yAxis }}
+                        </div>
+                        <div class="text-sm font-bold text-white">
+                          {{ Number(selectedBuild.y.toFixed(2)) }}
                         </div>
                       </div>
                     </div>
-                    <div
-                      v-else
-                      class="flex h-full items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-900/30 p-8 text-center"
-                    >
-                      <p class="text-sm italic text-gray-500">
-                        No build selected
-                      </p>
+
+                    <div class="space-y-1">
+                      <div
+                        v-for="item in selectedBuild.items"
+                        :key="item.slot"
+                        class="flex flex-col border-b border-gray-700/50 pb-0.5 last:border-0"
+                      >
+                        <span
+                          class="text-[8px] font-bold uppercase text-gray-500"
+                          >{{ item.slot }}</span
+                        >
+                        <span class="truncate text-[10px] text-gray-200"
+                          >{{ item.name }}</span
+                        >
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -480,6 +471,7 @@
           const exclusionHistory = ref([]);
           const slotView = ref({}); // { slotName: 'optimal' | 'excluded' }
           const selectedBuild = ref(null);
+          const tooltipPos = ref({ x: 0, y: 0 });
           let chart = null;
 
           const availableStats = [
@@ -655,22 +647,18 @@
             return currentFrontier.sort((a, b) => b.x - a.x || b.y - a.y);
           });
 
-          // Selection management (separate from computation to avoid recursive updates)
+          // Selection management
           watch(
             fullBuilds,
             (newBuilds) => {
-              if (newBuilds.length > 0) {
-                if (
-                  !selectedBuild.value ||
-                  !newBuilds.some(
-                    (b) =>
-                      Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
-                      Math.abs(b.y - selectedBuild.value.y) < 1e-9,
-                  )
-                ) {
-                  selectedBuild.value = newBuilds[0];
-                }
-              } else {
+              if (
+                selectedBuild.value &&
+                !newBuilds.some(
+                  (b) =>
+                    Math.abs(b.x - selectedBuild.value.x) < 1e-9 &&
+                    Math.abs(b.y - selectedBuild.value.y) < 1e-9,
+                )
+              ) {
                 selectedBuild.value = null;
               }
               updateChart();
@@ -739,9 +727,15 @@
                   onHover: (event, elements) => {
                     if (elements.length > 0) {
                       const build = fullBuilds.value[elements[0].index];
-                      if (selectedBuild.value !== build) {
-                        selectedBuild.value = build;
-                      }
+                      selectedBuild.value = build;
+                      tooltipPos.value = {
+                        x: event.x + 16,
+                        y: event.y + 16,
+                        width: event.chart.width,
+                        height: event.chart.height,
+                      };
+                    } else {
+                      selectedBuild.value = null;
                     }
                   },
                   scales: {
@@ -847,6 +841,7 @@
             getExcludedItemsForSlot,
             fullBuilds,
             selectedBuild,
+            tooltipPos,
             toggleExcluded,
             clearSlotExclusions,
             clearExclusions,
