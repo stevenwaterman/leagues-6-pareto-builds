@@ -299,9 +299,9 @@
             class="scroll-mt-32"
           >
             <div
-              class="flex items-center justify-between mb-4 border-b border-gray-800 pb-2"
+              class="mb-4 border-b border-gray-800 pb-2"
             >
-              <div class="flex flex-col">
+              <div class="flex items-center justify-between gap-4">
                 <div class="flex items-baseline gap-4">
                   <h2 class="text-3xl font-bold text-gray-200">{{ slot }}</h2>
                   <span
@@ -310,41 +310,88 @@
                     {{ getParetoItems(slot).length }} Optimal
                   </span>
                 </div>
-                <p
-                  v-if="slot === 'Ammo'"
-                  class="text-xs text-gray-500 mt-1 italic"
-                >
-                  Note: Only blessings are shown, if you're using a ranged
-                  weapon then you should mark all blessing as unobtainable.
-                </p>
-              </div>
 
-              <div class="flex gap-2">
-                <button
-                  @click="slotView[slot] = 'optimal'"
-                  :class="[
-                                    'px-3 py-1 text-xs font-bold uppercase tracking-wider rounded transition-colors',
-                                    slotView[slot] !== 'excluded' ? 'bg-yellow-600 text-white' : 'bg-gray-800 text-gray-500 hover:text-gray-300'
-                                ]"
-                >
-                  Optimal
-                </button>
-                <button
-                  @click="slotView[slot] = 'excluded'"
-                  :class="[
-                                    'px-3 py-1 text-xs font-bold uppercase tracking-wider rounded transition-colors flex items-center gap-2',
-                                    slotView[slot] === 'excluded' ? 'bg-red-900/60 text-red-200' : 'bg-gray-800 text-gray-500 hover:text-gray-300'
-                                ]"
-                >
-                  Excluded
-                  <span
-                    v-if="getExcludedItemsForSlot(slot).length > 0"
-                    class="bg-black/30 px-1.5 rounded-full text-[10px]"
+                <!-- Force Item UI -->
+                <div class="flex-1 max-w-xs relative">
+                  <div v-if="forcedItems[slot]" class="flex items-center justify-between gap-2 bg-yellow-900/30 border border-yellow-700/50 rounded-lg px-3 py-1.5">
+                    <span class="text-xs text-yellow-500 font-bold truncate uppercase tracking-tight">Forced: {{ forcedItems[slot] }}</span>
+                    <button @click="clearForcedItem(slot)" class="text-yellow-600 hover:text-yellow-400 flex-shrink-0 transition-colors" title="Clear Override">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div v-else class="relative group">
+                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                       </svg>
+                     </div>
+                     <input 
+                      v-model="searchQuery[slot]" 
+                      @focus="isSearching[slot] = true; selectedSearchIndex[slot] = 0"
+                      @input="selectedSearchIndex[slot] = 0"
+                      @keydown="handleSearchKeydown($event, slot)"
+                      placeholder="Force specific item..."
+                      class="w-full bg-gray-900/50 border border-gray-700 group-hover:border-gray-600 rounded-lg pl-9 pr-3 py-1.5 text-xs focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500/50 outline-none transition-all placeholder:text-gray-600"
+                    >
+                    <!-- Search Results Dropdown -->
+                    <div v-if="isSearching[slot] && searchQuery[slot]" class="absolute z-50 top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl overflow-hidden">
+                      <div v-if="filteredItems(slot).length > 0">
+                        <button 
+                          v-for="(item, index) in filteredItems(slot)" 
+                          :key="item.Name"
+                          @click="forceItem(slot, item.Name)"
+                          @mouseenter="selectedSearchIndex[slot] = index"
+                          :class="['w-full text-left px-4 py-2 text-xs transition-colors border-b border-gray-700 last:border-0 flex flex-col', selectedSearchIndex[slot] === index ? 'bg-gray-700' : 'hover:bg-gray-700']"
+                        >
+                          <span class="text-yellow-500 font-bold">{{ item.Name }}</span>
+                          <span class="text-[10px] text-gray-400">{{ xAxis }}: {{ item[xAxis] }} | {{ yAxis }}: {{ item[yAxis] }}</span>
+                        </button>
+                      </div>
+                      <div v-else class="px-4 py-3 text-xs text-gray-500 italic">
+                        No items found
+                      </div>
+                    </div>
+                    <!-- Overlay to close dropdown -->
+                    <div v-if="isSearching[slot]" @click="isSearching[slot] = false" class="fixed inset-0 z-40 bg-transparent"></div>
+                  </div>
+                </div>
+
+                <div class="flex gap-2">
+                  <button
+                    @click="slotView[slot] = 'optimal'"
+                    :class="[
+                                      'px-3 py-1 text-xs font-bold uppercase tracking-wider rounded transition-colors',
+                                      slotView[slot] !== 'excluded' ? 'bg-yellow-600 text-white' : 'bg-gray-800 text-gray-500 hover:text-gray-300'
+                                  ]"
                   >
-                    {{ getExcludedItemsForSlot(slot).length }}
-                  </span>
-                </button>
+                    Optimal
+                  </button>
+                  <button
+                    @click="slotView[slot] = 'excluded'"
+                    :class="[
+                                      'px-3 py-1 text-xs font-bold uppercase tracking-wider rounded transition-colors flex items-center gap-2',
+                                      slotView[slot] === 'excluded' ? 'bg-red-900/60 text-red-200' : 'bg-gray-800 text-gray-500 hover:text-gray-300'
+                                  ]"
+                  >
+                    Excluded
+                    <span
+                      v-if="getExcludedItemsForSlot(slot).length > 0"
+                      class="bg-black/30 px-1.5 rounded-full text-[10px]"
+                    >
+                      {{ getExcludedItemsForSlot(slot).length }}
+                    </span>
+                  </button>
+                </div>
               </div>
+              <p
+                v-if="slot === 'Ammo'"
+                class="text-xs text-gray-500 mt-2 italic"
+              >
+                Note: Only blessings are shown, if you're using a ranged
+                weapon then you should mark all blessing as unobtainable.
+              </p>
             </div>
 
             <div
@@ -505,6 +552,10 @@
             localStorage.getItem("osrs_pareto_yaxis") || "Total Def",
           );
           const excludedItems = ref(new Set());
+          const forcedItems = ref(JSON.parse(localStorage.getItem("osrs_leagues_forced") || "{}"));
+          const searchQuery = ref({}); // { slotName: string }
+          const isSearching = ref({}); // { slotName: boolean }
+          const selectedSearchIndex = ref({}); // { slotName: number }
           const exclusionHistory = ref([]);
           const slotView = ref({}); // { slotName: 'optimal' | 'excluded' }
           const buildViewMode = ref('recommended'); // 'all' | 'recommended'
@@ -588,6 +639,13 @@
           };
 
           const getParetoItems = (slot) => {
+            if (forcedItems.value[slot]) {
+              const forced = (equipmentData.value[slot] || []).find(
+                (i) => i.Name === forcedItems.value[slot],
+              );
+              if (forced) return [forced];
+            }
+
             const allItems = equipmentData.value[slot] || [];
             const items = allItems.filter(
               (item) => !excludedItems.value.has(item.Name),
@@ -946,6 +1004,54 @@
             localStorage.removeItem("osrs_leagues_excluded");
           };
 
+          const forceItem = (slot, itemName) => {
+            forcedItems.value[slot] = itemName;
+            localStorage.setItem(
+              "osrs_leagues_forced",
+              JSON.stringify(forcedItems.value),
+            );
+            isSearching.value[slot] = false;
+            searchQuery.value[slot] = "";
+            selectedSearchIndex.value[slot] = 0;
+          };
+
+          const handleSearchKeydown = (event, slot) => {
+            const items = filteredItems(slot);
+            if (!items.length) return;
+
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              selectedSearchIndex.value[slot] = (selectedSearchIndex.value[slot] + 1) % items.length;
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              selectedSearchIndex.value[slot] = (selectedSearchIndex.value[slot] - 1 + items.length) % items.length;
+            } else if (event.key === "Enter") {
+              event.preventDefault();
+              const selectedItem = items[selectedSearchIndex.value[slot] || 0];
+              if (selectedItem) {
+                forceItem(slot, selectedItem.Name);
+              }
+            } else if (event.key === "Escape") {
+              isSearching.value[slot] = false;
+            }
+          };
+
+          const clearForcedItem = (slot) => {
+            delete forcedItems.value[slot];
+            localStorage.setItem(
+              "osrs_leagues_forced",
+              JSON.stringify(forcedItems.value),
+            );
+          };
+
+          const filteredItems = (slot) => {
+            const query = (searchQuery.value[slot] || "").toLowerCase();
+            if (!query) return [];
+            return (equipmentData.value[slot] || [])
+              .filter((item) => item.Name.toLowerCase().includes(query))
+              .slice(0, 10);
+          };
+
           const getItemBySlot = (build, slot) => {
             return build.items.find(i => i.slot === slot);
           };
@@ -991,6 +1097,14 @@
             slotView,
             getItemBySlot,
             buildViewMode,
+            forcedItems,
+            searchQuery,
+            isSearching,
+            selectedSearchIndex,
+            handleSearchKeydown,
+            forceItem,
+            clearForcedItem,
+            filteredItems,
           };
         },
       }).mount("#app");
