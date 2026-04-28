@@ -741,17 +741,6 @@
               currentFrontier = newFrontier;
             }
 
-            if (currentFrontier.length <= 2) return currentFrontier;
-
-            // Calculate "Knee" scores (Distance from the chord connecting extremes)
-            const minX = currentFrontier[currentFrontier.length - 1].x;
-            const maxX = currentFrontier[0].x;
-            const minY = currentFrontier[0].y;
-            const maxY = currentFrontier[currentFrontier.length - 1].y;
-
-            const xRange = maxX - minX || 1;
-            const yRange = maxY - minY || 1;
-
             const frontierWithIdx = currentFrontier.map((p, idx) => ({ ...p, idx }));
 
             // --- Upper Convex Hull (Monotone Chain inspired) ---
